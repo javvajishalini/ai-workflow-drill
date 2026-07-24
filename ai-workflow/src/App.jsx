@@ -1,121 +1,157 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const initialSettings = {
+    username: 'johndoe',
+    email: 'john@example.com',
+    bio: 'Software developer and tech enthusiast.',
+    theme: 'light',
+    emailNotifications: true,
+    visibility: 'public'
+  }
+
+  const [settings, setSettings] = useState(initialSettings)
+  const [isSaved, setIsSaved] = useState(false)
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+    setSettings((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }))
+    setIsSaved(false)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setIsSaved(true)
+  }
+
+  const handleReset = () => {
+    setSettings(initialSettings)
+    setIsSaved(false)
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="settings-container">
+      <h2 className="settings-title">User Settings</h2>
+      <p className="settings-subtitle">Manage your account preferences</p>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {isSaved && (
+        <div className="alert-success">
+          ✓ Settings saved successfully!
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label" htmlFor="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            name="username"
+            className="form-input"
+            value={settings.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            className="form-input"
+            value={settings.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="bio">Bio</label>
+          <textarea
+            id="bio"
+            name="bio"
+            className="form-textarea"
+            value={settings.bio}
+            onChange={handleChange}
+            rows={3}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="theme">Theme Preference</label>
+          <select
+            id="theme"
+            name="theme"
+            className="form-select"
+            value={settings.theme}
+            onChange={handleChange}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System Default</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Profile Visibility</label>
+          <div className="radio-options">
+            <label className="radio-item">
+              <input
+                type="radio"
+                name="visibility"
+                value="public"
+                className="form-radio"
+                checked={settings.visibility === 'public'}
+                onChange={handleChange}
+              />
+              <span className="radio-label">Public</span>
+            </label>
+            <label className="radio-item">
+              <input
+                type="radio"
+                name="visibility"
+                value="private"
+                className="form-radio"
+                checked={settings.visibility === 'private'}
+                onChange={handleChange}
+              />
+              <span className="radio-label">Private</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <div className="checkbox-group">
+            <input
+              id="emailNotifications"
+              type="checkbox"
+              name="emailNotifications"
+              className="form-checkbox"
+              checked={settings.emailNotifications}
+              onChange={handleChange}
+            />
+            <label htmlFor="emailNotifications" className="checkbox-label">
+              Receive email notifications
+            </label>
+          </div>
+        </div>
+
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary">
+            Save Settings
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
 
